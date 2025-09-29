@@ -1,43 +1,49 @@
-#ifndef CMATRIX_H
-#define CMATRIX_H
+#include "cmatrix.h"
 
-#include <ncurses.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <string.h>
-
-//Basic Definitions
-#define MIN_DROP_L 5
-#define MAX_DROP_L 25
-#define MIN_V 1
-#define MAX_V 3
-#define FRAME_DELAY 100000 // == 100000 us or 100 ms
-
-//Character set
-#define CHAR_SET "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?"
-
-//Structure Setup
-typedef struct {
-		char *characters; // Array of char in column
-		int length;       // Length of the current drop
-		int y;			  // Current position in Y-Axis
-		int velocity;	  // Speed of chars falling (rows/frame)
-		int active;       // Activity of column (1/0)
-		int max_length;	  // Max length drop can reach
-} column_x;
-
-//Global Vars
-extern int screen_height;
-extern int screen_width;
-extern column_x *columns;
-
-//Function (Placeholders)
-void init_matrix(void); //initialize matrix
-void clear_matrix(void); //clear matrix
-void init_cols(void); //initialize a column
+int screen_height;
+int screen_width;
+column_x *columns;
 
 
+//returning a random character set for a matrix
+char return_random_char(void) {
+		return CHAR_SET[rand() % strlen(CHAR_SET)];
+}
 
-#endif
+//setting random range
+int return_random_range(int min, int max) {
+		return min + rand() % (min + max - 1);
+}
+
+//initializing ncurses lib
+void init_matrix(void) {
+		initscr();
+		cbreak(); //disables buffers
+		noecho(); //prevents echo of input
+		nodelay(stdscr, TRUE); //removes delays
+		curs_set(0); //hides cursor
+		
+		//setting up screen matrix
+		getmaxyx(stdscr, screen_height, screen_width);
+		srand(time(NULL)); //time based random number generation
+}
+
+void init_cols(void) {
+		columns = malloc(screen_width * sizeof(column_x));
+
+		for (int i = 0 ; i < screen_width ; i++) {
+				columns[i].max_length = return_random_range(MIN_DROP_L, MAX_DROP_L);
+				columns[i].characters = malloc(columns[i].max_length * sizeof(char));
+				columns[i].length = 0;
+				columns[i].y = -return_random_range(0, screen_height);
+				columns[i].velocity = return_random_range(MIN_V, MAX_V);
+				columns[i].active = rand() % 2 == 0;
+
+				//initializing columns with random set of chars		
+				for (int j = 0 ; j < columns[i].max_length ; j++) {
+						
+				}
+		}
+
+}
+
