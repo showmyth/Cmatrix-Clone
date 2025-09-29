@@ -35,10 +35,10 @@ extern column_x *columns;
 
 //Function (Placeholders)
 void init_matrix(void); //initialize matrix
-void clear_matrix(void); //clear matrix
 void init_cols(void); //initialize a column
 void update_columns(void); //update columns
 void draw_matrix(void); //draw the matrix
+void clear_matrix(void); //clear matrix
 
 
 #endif
