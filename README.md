@@ -5,7 +5,7 @@
 
 ## About
 
-**Cmatrix-Clone** is a hobby project aimed at implementing the classic [CMatrix](https://github.com/abishekvashok/cmatrix) terminal program from (mostly) scratch in C. This project serve zero purpose and the development will depend on my available will to live!
+**Cmatrix-Clone** is a hobby project aimed at implementing the classic [CMatrix](https://github.com/abishekvashok/cmatrix) terminal program from (mostly) scratch in C. This project serves zero purpose and the development will depend on my available will to live!
 
 ## Features
 
