@@ -3,11 +3,31 @@
 int screen_height;
 int screen_width;
 column_x *columns;
-
+int color_mode = COLOR_MODE_GREEN; // Default to green
 
 //returning a random character set for a matrix
 char return_random_char(void) {
 		return CHAR_SET[rand() % strlen(CHAR_SET)];
+}
+
+//returning a color pair number based on color mode
+int get_random_color(void) {
+		switch (color_mode) {
+				case COLOR_MODE_GREEN:
+						return PAIR_GREEN;
+				
+				case COLOR_MODE_WHITE:
+						return PAIR_WHITE;
+				
+				case COLOR_MODE_RAINBOW:
+				default: {
+						int colors[] = {
+								PAIR_RED, PAIR_GREEN, PAIR_YELLOW,
+								PAIR_BLUE, PAIR_PURPLE, PAIR_CYAN, PAIR_WHITE
+						};
+						return colors[rand() % 7]; // 7 colors (excluding black)
+				}
+		}
 }
 
 //setting random range
@@ -22,6 +42,19 @@ void init_matrix(void) {
 		noecho(); //prevents echo of input
 		nodelay(stdscr, TRUE); //removes delays
 		curs_set(0); //hides cursor
+		
+		//initialize colors
+		if (has_colors()) {
+				start_color();
+				init_pair(PAIR_BLACK, COLOR_BLACK, COLOR_BLACK);
+				init_pair(PAIR_RED, COLOR_RED, COLOR_BLACK);
+				init_pair(PAIR_GREEN, COLOR_GREEN, COLOR_BLACK);
+				init_pair(PAIR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
+				init_pair(PAIR_BLUE, COLOR_BLUE, COLOR_BLACK);
+				init_pair(PAIR_PURPLE, COLOR_MAGENTA, COLOR_BLACK);
+				init_pair(PAIR_CYAN, COLOR_CYAN, COLOR_BLACK);
+				init_pair(PAIR_WHITE, COLOR_WHITE, COLOR_BLACK);
+		}
 		
 		//setting up screen matrix
 		getmaxyx(stdscr, screen_height, screen_width);
@@ -95,7 +128,13 @@ void draw_matrix(void) {
 
 						//check if char on screen
 						if (y>=0 &&  y < screen_height) {
+								// Get a random color for this character
+								int color_pair = get_random_color();
+								
+								// Apply color and print character
+								attron(COLOR_PAIR(color_pair));
 								mvaddch(y, i, columns[i].characters[j]);
+								attroff(COLOR_PAIR(color_pair));
 						}
 
 				}
@@ -113,7 +152,21 @@ void clear_matrix(void) {
 }
 
 //Main Function
-int main() {
+int main(int argc, char *argv[]) {
+		// Parse command line arguments
+		if (argc > 1) {
+				int flag = atoi(argv[1]);
+				if (flag >= COLOR_MODE_GREEN && flag <= COLOR_MODE_RAINBOW) {
+						color_mode = flag;
+				} else {
+						printf("Usage: %s [color_mode]\n", argv[0]);
+						printf("  0 - Green (default)\n");
+						printf("  1 - White\n");
+						printf("  2 - Rainbow\n");
+						return 1;
+				}
+		}
+
 		init_matrix();
 		init_cols();
 		//Main Loop
